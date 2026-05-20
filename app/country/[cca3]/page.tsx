@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Country } from "@/app/country";
+import Loader from "@/app/loading";
 
 async function fetchData(code: string): Promise<Country> {
   const res = await fetch(
@@ -35,9 +36,7 @@ export default function CountryDetail({
   });
 
   if (isLoading)
-    return (
-      <p className="mt-20 text-center text-muted-foreground">Loading...</p>
-    );
+    return <Loader/>
   if (isError)
     return (
       <p className="mt-20 text-center text-destructive">

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
+import Loader from "../loading";
 
 async function fetchPosts() {
   const res = await fetch(
@@ -25,7 +26,7 @@ export default function BlogPage() {
   });
 
   if (isLoading)
-    return <div className="text-muted-foreground">Loading...</div>;
+    return <Loader/>
   if (isError)
     return <div className="text-destructive">Error: {error.message}</div>;
 

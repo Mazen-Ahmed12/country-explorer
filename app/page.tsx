@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
 import { Country } from "./country";
+import Loader from "./loading";
 
 const REGIONS = ["Africa", "Americas", "Asia", "Europe", "Oceania"];
 
@@ -46,9 +47,7 @@ export default function Home() {
   }, [countries, search, selectedRegion]);
 
   if (isLoading)
-    return (
-      <div className="mt-20 text-center text-muted-foreground">Loading...</div>
-    );
+    return <Loader />
 
   if (isError)
     return (

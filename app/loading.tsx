@@ -1,7 +1,9 @@
-export default function Loading() {
+"use client";
+
+export default function Loader() {
   return (
-    <div className="flex min-h-[60vh] items-center justify-center">
-      <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-primary" />
+    <div className="flex min-h-screen items-center justify-center">
+      <img src="/Loader.svg" alt="Loading animation" className="w-80 h-80" />
     </div>
   );
 }

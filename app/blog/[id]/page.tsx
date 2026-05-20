@@ -3,6 +3,7 @@
 import { use } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import Loader from "@/app/loading";
 
 async function fetchPost(id: string) {
   if (!id) throw new Error("No ID provided");
@@ -34,7 +35,7 @@ export default function PostPage({
     "rounded-md bg-primary px-4 py-2 text-primary-foreground transition-colors hover:bg-primary/90";
 
   if (isLoading)
-    return <h1 className="text-muted-foreground">Loading...</h1>;
+    return <Loader/>
   if (isError)
     return <h1 className="text-destructive">Error: {error.message}</h1>;
 

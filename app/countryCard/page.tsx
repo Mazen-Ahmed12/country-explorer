@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import type { Country } from "@/app/country";
+import Loader from "../loading";
 
 async function fetchCountry(cca3: string): Promise<Country> {
   const res = await fetch(
@@ -35,7 +36,7 @@ export default function CountryCardPage({
   });
 
   if (isLoading)
-    return <div className="p-6 text-muted-foreground">Loading...</div>;
+    return <Loader/>
   if (isError)
     return <div className="p-6 text-destructive">Error: {error.message}</div>;
 
