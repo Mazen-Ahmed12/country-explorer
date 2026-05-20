@@ -1,9 +1,8 @@
-"use client"
+"use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { use } from "react";
+import { useQuery } from "@tanstack/react-query";
 
-// Mock API functions
 const fetchUserById = async (id: string) => {
   const res = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`);
   if (!res.ok) throw new Error("User not found");
@@ -11,47 +10,44 @@ const fetchUserById = async (id: string) => {
 };
 
 const fetchPostsByUserId = async (userId: number) => {
-  const res = await fetch(`https://jsonplaceholder.typicode.com/posts?userId=${userId}`);
-  return res.json(); // Returns array of posts
+  const res = await fetch(
+    `https://jsonplaceholder.typicode.com/posts?userId=${userId}`,
+  );
+  return res.json();
 };
 
-export default function FetchLoopPage({ params }: { params: Promise<{ id: string }> }) {
-  // 1. Fetch the user first
-  const {id} = use(params);
+export default function FetchLoopPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = use(params);
 
-  const { 
-      data: user, 
-      isLoading: isUserLoading 
-    } = useQuery({
-        queryKey: ["user", id],
-        queryFn: () => fetchUserById(id),
-        enabled: !!id,
-    });
-    
-    // 2. Fetch posts ONLY after we have the user.id
-    const { 
-        data: posts, 
-        isLoading: isPostsLoading 
-      } = useQuery({
-          queryKey: ["posts", user?.id], // This key updates once user is found
-          queryFn: () => fetchPostsByUserId(user!.id),
-          // ENABLED is the key here:
-          // !!user converts the object to 'true'. If user is undefined, it's 'false'.
-          enabled: !!user?.id, 
-      });
+  const { data: user, isLoading: isUserLoading } = useQuery({
+    queryKey: ["user", id],
+    queryFn: () => fetchUserById(id),
+    enabled: !!id,
+  });
 
-  if (isUserLoading) return <p>Finding user...</p>;
+  const { data: posts, isLoading: isPostsLoading } = useQuery({
+    queryKey: ["posts", user?.id],
+    queryFn: () => fetchPostsByUserId(user!.id),
+    enabled: !!user?.id,
+  });
+
+  if (isUserLoading)
+    return <p className="text-muted-foreground">Finding user...</p>;
 
   return (
-    <div>
-      <h1>{user?.name}'s Profile</h1>
-      <hr />
-      
-      <h3>Posts:</h3>
+    <div className="text-foreground">
+      <h1 className="text-2xl font-bold">{user?.name}&apos;s Profile</h1>
+      <hr className="my-4 border-border" />
+
+      <h3 className="mb-2 font-semibold">Posts:</h3>
       {isPostsLoading ? (
-        <p>Loading posts...</p>
+        <p className="text-muted-foreground">Loading posts...</p>
       ) : (
-        <ul>
+        <ul className="list-disc space-y-2 pl-6 text-muted-foreground">
           {posts?.map((post: { id: number; title: string }) => (
             <li key={post.id}>{post.title}</li>
           ))}

@@ -66,56 +66,68 @@ export default function CreatePostPage() {
     mutation.mutate(data);
   }
 
+  const inputClass =
+    "m-2 rounded-md border border-input bg-background p-2 text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 outline-none";
+
   return (
-    <div className="flex flex-col p-4">
-      {/* Form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-row">
+    <div className="flex flex-col p-4 text-foreground">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-row flex-wrap">
         <div className="flex flex-col">
           <input
             type="text"
-            className="border border-gray-300 p-2 m-2"
+            className={inputClass}
             placeholder="Title"
             {...register("title")}
           />
           {errors.title && (
-            <p className="text-red-500">{errors.title.message}</p>
+            <p className="m-2 text-destructive">{errors.title.message}</p>
           )}
         </div>
         <div className="flex flex-col">
           <input
             type="text"
-            className="border border-gray-300 p-2 m-2"
+            className={inputClass}
             placeholder="Body"
             {...register("body")}
           />
-          {errors.body && <p className="text-red-500">{errors.body.message}</p>}
+          {errors.body && (
+            <p className="m-2 text-destructive">{errors.body.message}</p>
+          )}
         </div>
         <div className="flex flex-col">
           <button
             type="submit"
-            className="bg-blue-500 text-white p-2 m-2"
+            className="m-2 rounded-md bg-primary p-2 text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
             disabled={mutation.isPending}
           >
             {mutation.isPending ? "Creating..." : "Create Post"}
           </button>
           {mutation.isError && (
-            <p className="text-red-500">Error: {mutation.error.message}</p>
+            <p className="m-2 text-destructive">
+              Error: {mutation.error.message}
+            </p>
           )}
           {mutation.isSuccess && (
-            <p className="text-green-500">Post created!</p>
+            <p className="m-2 text-green-600 dark:text-green-400">
+              Post created!
+            </p>
           )}
         </div>
       </form>
 
-      {/* Posts List */}
       <div className="mt-6">
-        <h2 className="text-xl font-bold mb-2">Posts</h2>
-        {isLoading && <p>Loading posts...</p>}
-        {isError && <p className="text-red-500">Error: {error.message}</p>}
+        <h2 className="mb-2 text-xl font-bold">Posts</h2>
+        {isLoading && <p className="text-muted-foreground">Loading posts...</p>}
+        {isError && <p className="text-destructive">Error: {error.message}</p>}
         <ul>
-          {posts?.map((post: any) => (
-            <li key={post.id} className="border-b p-2">
-              <Link href={`/blog/${post.id}`}>{post.title}</Link>
+          {posts?.map((post: { id: number; title: string }) => (
+            <li key={post.id} className="border-b border-border p-2">
+              <Link
+                href={`/blog/${post.id}`}
+                className="text-foreground hover:text-primary"
+              >
+                {post.title}
+              </Link>
             </li>
           ))}
         </ul>

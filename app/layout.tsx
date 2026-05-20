@@ -14,12 +14,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={cn("font-sans", geist.variable)}>
-      <body>
+    <html lang="en" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');var d=t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);}catch(e){}})();`,
+          }}
+        />
+      </head>
+      <body className="min-h-screen bg-background text-foreground antialiased">
         <SessionProvider>
           <ThemeProvider>
             <Navbar />
-            <main className="max-w-6xl mx-auto px-4 py-8">
+            <main className="mx-auto max-w-6xl px-4 py-8">
               <Provider>{children}</Provider>
             </main>
           </ThemeProvider>

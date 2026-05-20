@@ -1,24 +1,30 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import DarkModeToggle from "@/components/DarkModeToggle";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
+const navLinkClass =
+  "flex h-10 w-22 items-center justify-center rounded-lg bg-primary p-1 text-sm text-primary-foreground transition-colors hover:bg-primary/90";
+
 export default function Navbar() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  if (status === "loading") return <p>Loading...</p>;
+  if (status === "loading")
+    return <p className="p-4 text-muted-foreground">Loading...</p>;
+
   return (
-    <nav className="flex items-center justify-between h-15 px-4 sticky top-0 z-50 bg-white dark:bg-black border-b border-y-2 ">
-      <Link href="/" className="size-10">
+    <nav className="sticky top-0 z-50 flex h-15 items-center justify-between border-b border-border bg-background px-4">
+      <Link href="/" className="size-10 text-primary">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
           strokeWidth="1.5"
           stroke="currentColor"
-          className="w-full h-full flex items-start justify-start text-blue-600"
+          className="h-full w-full"
         >
           <path
             strokeLinecap="round"
@@ -28,63 +34,35 @@ export default function Navbar() {
         </svg>
       </Link>
       <div className="flex gap-5">
-        <Link
-          href="/"
-          className="flex items-center justify-center w-22 h-10 rounded-lg text-white bg-black dark:text-black dark:bg-white p-1 text-sm"
-        >
+        <Link href="/" className={navLinkClass}>
           Home
         </Link>
-        <Link
-          href="/about"
-          className="flex items-center justify-center w-22 h-10 rounded-lg text-white bg-black dark:text-black dark:bg-white p-1 text-sm"
-        >
-          about
-        </Link>
-        <Link
-          href="/blog"
-          className="flex items-center justify-center w-22 h-10 rounded-lg text-white bg-black dark:text-black dark:bg-white p-1 text-sm"
-        >
+        <Link href="/blog" className={navLinkClass}>
           blog
         </Link>
-        <Link
-          href="/counter"
-          className="flex items-center justify-center w-22 h-10 rounded-lg text-white bg-black dark:text-black dark:bg-white p-1 text-sm"
-        >
+        <Link href="/counter" className={navLinkClass}>
           counter
         </Link>
-        <Link
-          href="/createPost"
-          className="flex items-center justify-center w-22 h-10 rounded-lg text-white bg-black dark:text-black dark:bg-white p-1 text-sm"
-        >
+        <Link href="/createPost" className={navLinkClass}>
           create Post
-        </Link>
-        <Link
-          href="/test"
-          className="flex items-center justify-center w-22 h-10 rounded-lg text-white bg-black dark:text-black dark:bg-white p-1 text-sm"
-        >
-          test
         </Link>
       </div>
       <div className="flex flex-row gap-5">
         <div>
           {session ? (
             <div className="flex flex-row items-center justify-center gap-5">
-              <Button className="w-20 h-10 " onClick={() => signOut()}>
+              <Button className="h-10 w-20" onClick={() => signOut()}>
                 Logout
               </Button>
               <div className="flex flex-col">
-                <p className="text-black dark:text-white">
-                  {session.user?.name}
-                </p>
-                <p className="text-black dark:text-white">
-                  {session.user?.email}
-                </p>
+                <p className="text-foreground">{session.user?.name}</p>
+                <p className="text-muted-foreground">{session.user?.email}</p>
               </div>
             </div>
           ) : (
             <Button
               onClick={() => router.push("/authPage")}
-              className="w-20 h-10 text-white dark:text-black p-1 text-sm"
+              className="h-10 w-20 text-sm"
             >
               Login
             </Button>

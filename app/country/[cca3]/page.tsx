@@ -1,9 +1,11 @@
 "use client";
-import { useParams } from "next/navigation";
+
+import { use } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 import { Country } from "@/app/country";
 
 async function fetchData(code: string): Promise<Country> {
@@ -14,11 +16,13 @@ async function fetchData(code: string): Promise<Country> {
   return res.json();
 }
 
-export default function CountryDetail() {
-  // get the country name from the URL e.g. /country/Egypt → name = "Egypt"
-  const params = useParams();
+export default function CountryDetail({
+  params,
+}: {
+  params: Promise<{ cca3: string }>;
+}) {
+  const { cca3 } = use(params);
   const router = useRouter();
-  const cca3 = params.cca3 as string;
 
   const {
     data: country,
@@ -30,22 +34,23 @@ export default function CountryDetail() {
     queryFn: () => fetchData(cca3),
   });
 
-  if (isLoading) return <div className="text-center mt-20">Loading...</div>;
+  if (isLoading)
+    return (
+      <p className="mt-20 text-center text-muted-foreground">Loading...</p>
+    );
   if (isError)
     return (
-      <div className="text-center text-red-500 mt-20">
+      <p className="mt-20 text-center text-destructive">
         Error: {error.message}
-      </div>
+      </p>
     );
 
-  // get the first result from the array
-  if (!country) return <p>Country not found.</p>;
-  // convert currencies object to readable string e.g. "Egyptian Pound (EGP)"
+  if (!country) return <p className="text-muted-foreground">Country not found.</p>;
+
   const currencyList = Object.entries(country.currencies ?? {})
     .map(([code, val]) => `${val.name} (${code})`)
     .join(", ");
 
-  // convert languages object to readable string e.g. "Arabic"
   const languageList = Object.values(country.languages ?? {}).join(", ");
 
   return (
@@ -54,55 +59,57 @@ export default function CountryDetail() {
         ← Back
       </Button>
 
-      <div className="flex flex-col lg:flex-row gap-12">
-        {/* Flag */}
+      <div className="flex flex-col gap-12 lg:flex-row">
         <img
           src={country.flags.png}
           alt={country.flags.alt}
-          className="w-full lg:w-1/2 rounded-lg shadow-md object-cover"
+          className="w-full rounded-lg object-cover shadow-md lg:w-1/2"
         />
 
-        {/* Details */}
         <div className="flex-1">
-          <h1 className="text-3xl font-bold mb-2 dark:text-white">
+          <h1 className="mb-2 text-3xl font-bold text-foreground">
             {country.name.common}
           </h1>
           <Badge className="mb-6">{country.region}</Badge>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700 dark:text-gray-300">
+          <div className="grid grid-cols-1 gap-4 text-muted-foreground sm:grid-cols-2">
             <p>
-              <strong>Official Name:</strong> {country.name.official}
+              <strong className="text-foreground">Official Name:</strong>{" "}
+              {country.name.official}
             </p>
             <p>
-              <strong>Population:</strong> {country.population.toLocaleString()}
+              <strong className="text-foreground">Population:</strong>{" "}
+              {country.population.toLocaleString()}
             </p>
             <p>
-              <strong>Sub Region:</strong> {country.subregion}
+              <strong className="text-foreground">Sub Region:</strong>{" "}
+              {country.subregion}
             </p>
             <p>
-              <strong>Capital:</strong> {country.capital?.[0] ?? "N/A"}
+              <strong className="text-foreground">Capital:</strong>{" "}
+              {country.capital?.[0] ?? "N/A"}
             </p>
             <p>
-              <strong>Currencies:</strong> {currencyList || "N/A"}
+              <strong className="text-foreground">Currencies:</strong>{" "}
+              {currencyList || "N/A"}
             </p>
             <p>
-              <strong>Languages:</strong> {languageList || "N/A"}
+              <strong className="text-foreground">Languages:</strong>{" "}
+              {languageList || "N/A"}
             </p>
           </div>
 
-          {/* Border countries — each one is clickable */}
           {country.borders && country.borders.length > 0 && (
             <div className="mt-6">
-              <p className="font-bold mb-3 dark:text-white">
-                Border Countries:
-              </p>
-              <div className="flex flex-wrap gap-2 mt-2">
+              <p className="mb-3 font-bold text-foreground">Border Countries:</p>
+              <div className="mt-2 flex flex-wrap gap-2">
                 {country.borders.map((code) => (
-                  <p
+                  <Link
                     key={code}
-                    className="bg-white text-black px-2 py-1 rounded hover:underline"
+                    href={`/country/${code}`}
+                    className="rounded-md border border-border bg-card px-3 py-1 text-sm text-card-foreground transition-colors hover:bg-accent"
                   >
                     {code}
-                  </p>
+                  </Link>
                 ))}
               </div>
             </div>

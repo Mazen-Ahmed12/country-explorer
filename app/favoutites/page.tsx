@@ -10,7 +10,7 @@ function Favourites() {
   if (favourites.length === 0) {
     return (
       <div className="text-center mt-20">
-        <p className="text-gray-500 dark:text-gray-400 mb-4">
+        <p className="mb-4 text-muted-foreground">
           No favourites yet
         </p>
         <Button>
@@ -22,11 +22,11 @@ function Favourites() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-6 dark:text-white">
+      <h2 className="mb-6 text-2xl font-bold text-foreground">
         Your Favourites ({favourites.length})
       </h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {favourites.map((country) => (
           <CountryCard key={country.cca3} country={country} />
         ))}
