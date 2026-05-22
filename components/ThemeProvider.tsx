@@ -3,50 +3,34 @@
 import {
   createContext,
   useContext,
-  useEffect,
-  useState,
+  useMemo,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
+import { getThemeSnapshot, subscribe, toggleTheme } from "./themeStore";
 
-const ThemeContext = createContext({
-  isDark: false,
+type ThemeContextValue = {
+  theme: "light" | "dark";
+  toggle: () => void;
+};
+
+const ThemeContext = createContext<ThemeContextValue>({
+  theme: "light",
   toggle: () => {},
 });
 
-function getInitialDark(): boolean {
-  if (typeof window === "undefined") return false;
-  const stored = localStorage.getItem("theme");
-  if (stored === "dark") return true;
-  if (stored === "light") return false;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches;
-}
-
 export default function ThemeProvider({ children }: { children: ReactNode }) {
-  const [isDark, setIsDark] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setIsDark(getInitialDark());
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-    document.documentElement.classList.toggle("dark", isDark);
-    localStorage.setItem("theme", isDark ? "dark" : "light");
-  }, [isDark, mounted]);
-
-  function toggle() {
-    setIsDark((prev) => !prev);
-  }
+  const theme = useSyncExternalStore(subscribe, getThemeSnapshot, getThemeSnapshot);
+  const value = useMemo<ThemeContextValue>(() => ({ theme, toggle: toggleTheme }), [theme]);
 
   return (
-    <ThemeContext.Provider value={{ isDark, toggle }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );
 }
 
 export function useTheme() {
-  return useContext(ThemeContext);
+  const { theme, toggle } = useContext(ThemeContext);
+  return { isDark: theme === "dark", toggle };
 }

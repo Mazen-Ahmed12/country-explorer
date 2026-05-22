@@ -5,8 +5,6 @@ import { signIn, signOut } from "next-auth/react";
 export default function AuthButtons() {
   return (
     <div className="flex flex-col gap-4">
-      {/*<Button onClick={() => signIn("github")}>Login with GitHub</Button>
-      <Button onClick={() => signIn("google")}>Login with Google</Button>*/}
       <Button
         onClick={() =>
           signIn("credentials", {
